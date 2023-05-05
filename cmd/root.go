@@ -14,7 +14,10 @@ func Execute() {
 	}
 
 	cmd.AddCommand(
+		// HTTP
 		Rest,
+		// CRON
+		CurrentDollar,
 	)
 
 	CheckFatal(cmd.Execute())
