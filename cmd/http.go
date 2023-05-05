@@ -1,9 +1,7 @@
 package cmd
 
 import (
-	"fmt"
-
-	"github.com/piovani/wallet/infra/config"
+	"github.com/piovani/wallet/ui/rest"
 	"github.com/spf13/cobra"
 )
 
@@ -14,7 +12,7 @@ var (
 		Version: "1.0.0",
 		Run: func(cmd *cobra.Command, args []string) {
 			InitConfig()
-			fmt.Println(config.Env.ApiRestPort)
+			CheckFatal(rest.NewRest().Start())
 		},
 	}
 )
