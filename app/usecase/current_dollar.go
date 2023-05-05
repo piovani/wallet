@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 	"time"
@@ -24,26 +23,23 @@ func NewCurrentDollar() *CurrentDollar {
 	return &CurrentDollar{}
 }
 
-func (c *CurrentDollar) Execute() float64 {
+func (c *CurrentDollar) Execute() (float64, error) {
 	value := float64(0)
 
 	res, err := http.Get("https://www.bcb.gov.br/api/servico/sitebcb/indicadorCambio")
 	if err != nil {
-		c.logError(err)
-		return value
+		return value, err
 	}
 
 	content, err := io.ReadAll(res.Body)
 	res.Body.Close()
 	if err != nil {
-		c.logError(err)
-		return value
+		return value, err
 	}
 
 	var exchange Exchange
 	if err = json.Unmarshal(content, &exchange); err != nil {
-		c.logError(err)
-		return value
+		return value, err
 	}
 
 	for i := 0; i < len(exchange.Content); i++ {
@@ -55,13 +51,5 @@ func (c *CurrentDollar) Execute() float64 {
 		}
 	}
 
-	if value == float64(0) {
-		c.logError(fmt.Errorf("value not found"))
-	}
-
-	return value
-}
-
-func (c *CurrentDollar) logError(err error) {
-	fmt.Println("current_dollar", err)
+	return value, nil
 }

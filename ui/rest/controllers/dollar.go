@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/piovani/wallet/app/usecase"
 )
 
 type DollarController struct{}
@@ -13,5 +14,11 @@ func NewDollarController() *DollarController {
 }
 
 func (d *DollarController) CurrentValue(c *gin.Context) {
-	c.JSON(http.StatusOK, map[string]any{"value": 1.23})
+	usecase := usecase.NewCurrentDollar()
+	value, err := usecase.Execute()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, map[string]any{"error": err})
+	}
+
+	c.JSON(http.StatusOK, map[string]any{"value": value})
 }
