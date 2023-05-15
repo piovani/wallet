@@ -14,5 +14,7 @@ func GetRoute(r *gin.Engine) {
 	r.GET("/health", healthController.Health)
 
 	// DOLLAR
-	r.GET("dollar/current-value", dollarController.CurrentValue)
+	routeDollar := r.Group("/dollar")
+	routeDollar.GET("/current-value", dollarController.CurrentValue)
+	routeDollar.GET("/purchase-values", dollarController.PurchaseValues)
 }

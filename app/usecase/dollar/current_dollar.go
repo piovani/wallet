@@ -1,7 +1,8 @@
-package usecase
+package dollar
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"time"
@@ -15,6 +16,10 @@ type Exchange struct {
 		Date      time.Time `json:"dataIndicador"`
 		Type      string    `json:"tipoCotacao"`
 	} `json:"conteudo"`
+}
+
+type Value struct {
+	Value float64 `json:"divisa"`
 }
 
 type CurrentDollar struct{}
@@ -37,19 +42,21 @@ func (c *CurrentDollar) Execute() (float64, error) {
 		return value, err
 	}
 
-	var exchange Exchange
-	if err = json.Unmarshal(content, &exchange); err != nil {
+	var v Value
+	if err = json.Unmarshal(content, &v); err != nil {
 		return value, err
 	}
 
-	for i := 0; i < len(exchange.Content); i++ {
-		if exchange.Content[i].Coin == "Dólar" && exchange.Content[i].Type == "Fechamento" {
-			value = exchange.Content[i].BuyValue
-			if exchange.Content[i].Type == "Fechamento" {
-				break
-			}
-		}
-	}
+	fmt.Println(v)
+
+	// for i := 0; i < len(exchange.Content); i++ {
+	// 	if exchange.Content[i].Coin == "Dólar" && exchange.Content[i].Type == "Fechamento" {
+	// 		value = exchange.Content[i].BuyValue
+	// 		if exchange.Content[i].Type == "Fechamento" {
+	// 			break
+	// 		}
+	// 	}
+	// }
 
 	return value, nil
 }
