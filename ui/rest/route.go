@@ -15,6 +15,5 @@ func GetRoute(r *gin.Engine) {
 
 	// DOLLAR
 	routeDollar := r.Group("/dollar")
-	// routeDollar.GET("/current-value", dollarController.CurrentValue)
 	routeDollar.GET("/purchase-values", dollarController.PurchaseValues)
 }
