@@ -18,22 +18,24 @@ func NewPurchaseValues() *PurchaseValues {
 	return &PurchaseValues{}
 }
 
-func (p *PurchaseValues) Execute() (map[string]any, error) {
-	var err error
+func (p *PurchaseValues) Execute() (map[string]any, map[string]string) {
 	values := make(map[string]any)
+	errs := make(map[string]string)
+	var err error
 
+	values["dollar_base"], err = p.getValueDollarBase()
+	p.checkErr(errs, err, "Dolar Base")
 	values["salto_del_guaira"], err = p.getValueSaltoDelGuaira()
-	values["compras_paraguai"], err = p.getValueComprasParaguai()
-	if err != nil {
-		return values, err
-	}
+	p.checkErr(errs, err, "Salto Del Guaira")
+	// values["compras_paraguai"], err = p.getValueComprasParaguai()
+	// p.checkErr(errs, err, "Compras Paraguai")
 
-	return values, nil
+	return values, errs
 }
 
-type ExchangeComprasParaguai struct {
+type Exchange struct {
 	Content []struct {
-		Coin      string    `json:"esp-cotation"`
+		Coin      string    `json:"moeda"`
 		BuyValue  float64   `json:"valorCompra"`
 		SaleValue float64   `json:"valorVenda"`
 		Date      time.Time `json:"dataIndicador"`
@@ -41,8 +43,8 @@ type ExchangeComprasParaguai struct {
 	} `json:"conteudo"`
 }
 
-func (p *PurchaseValues) getValueComprasParaguai() (value float64, err error) {
-	res, err := http.Get("https://www.comprasparaguai.com.br/")
+func (p *PurchaseValues) getValueDollarBase() (value float64, err error) {
+	res, err := http.Get("https://www.bcb.gov.br/api/servico/sitebcb/indicadorCambio")
 	if err != nil {
 		return value, err
 	}
@@ -58,10 +60,63 @@ func (p *PurchaseValues) getValueComprasParaguai() (value float64, err error) {
 		return value, err
 	}
 
-	fmt.Println(exchange)
+	for i := 0; i < len(exchange.Content); i++ {
+		if exchange.Content[i].Coin == "Dólar" && exchange.Content[i].Type == "Fechamento" {
+			value = exchange.Content[i].BuyValue
+			if exchange.Content[i].Type == "Fechamento" {
+				break
+			}
+		}
+	}
 
-	return float64(10), nil
+	if value == float64(0) {
+		return value, fmt.Errorf("value not found")
+	}
+
+	return value, nil
 }
+
+type ExchangeComprasParaguai struct {
+	Content []struct {
+		Coin      string    `json:"esp-cotation"`
+		BuyValue  float64   `json:"valorCompra"`
+		SaleValue float64   `json:"valorVenda"`
+		Date      time.Time `json:"dataIndicador"`
+		Type      string    `json:"tipoCotacao"`
+	} `json:"conteudo"`
+}
+
+// type Exchange struct {
+// 	Content []struct {
+// 		Coin      string    `json:"moeda"`
+// 		BuyValue  float64   `json:"valorCompra"`
+// 		SaleValue float64   `json:"valorVenda"`
+// 		Date      time.Time `json:"dataIndicador"`
+// 		Type      string    `json:"tipoCotacao"`
+// 	} `json:"conteudo"`
+// }
+
+// func (p *PurchaseValues) getValueComprasParaguai() (value float64, err error) {
+// 	res, err := http.Get("https://www.comprasparaguai.com.br/")
+// 	if err != nil {
+// 		return value, err
+// 	}
+
+// 	content, err := io.ReadAll(res.Body)
+// 	res.Body.Close()
+// 	if err != nil {
+// 		return value, err
+// 	}
+
+// 	var exchange Exchange
+// 	if err = json.Unmarshal(content, &exchange); err != nil {
+// 		return value, err
+// 	}
+
+// 	fmt.Println(exchange)
+
+// 	return float64(10), nil
+// }
 
 func (p *PurchaseValues) getValueSaltoDelGuaira() (value float64, err error) {
 	res, err := http.Get("http://mundialcambios.com.py/?branch=5&lang=pt")
@@ -93,4 +148,12 @@ func (p *PurchaseValues) getValueSaltoDelGuaira() (value float64, err error) {
 	fmt.Println(valueString)
 
 	return value, nil
+}
+
+// Logs
+func (p *PurchaseValues) checkErr(errs map[string]string, err error, msg string) {
+	if err != nil {
+		errs[msg] = err.Error()
+		fmt.Println(fmt.Sprintf("fuction error: %s", msg), err)
+	}
 }

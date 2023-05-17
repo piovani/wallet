@@ -1,9 +1,6 @@
 package cmd
 
 import (
-	"fmt"
-
-	"github.com/piovani/wallet/app/usecase/dollar"
 	"github.com/spf13/cobra"
 )
 
@@ -15,8 +12,8 @@ var (
 		Run: func(cmd *cobra.Command, args []string) {
 			InitConfig()
 
-			currentDollar := dollar.NewCurrentDollar()
-			fmt.Println(currentDollar.Execute())
+			// currentDollar := dollar.NewCurrentDollar()
+			// fmt.Println(currentDollar.Execute())
 		},
 	}
 )
