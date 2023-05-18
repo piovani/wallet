@@ -2,6 +2,7 @@ package dollar
 
 import (
 	"fmt"
+	"sync"
 )
 
 type PurchaseValues struct{}
@@ -10,33 +11,38 @@ func NewPurchaseValues() *PurchaseValues {
 	return &PurchaseValues{}
 }
 
-func (p *PurchaseValues) Execute() (map[string]any, map[string]string) {
+func (p *PurchaseValues) Execute() (map[string]any, map[string]any) {
 	values := make(map[string]any)
-	errs := make(map[string]string)
-	var err error
+	errs := make(map[string]any)
 
-	values["dollar_base"], err = p.getValueDollarBase()
-	p.checkErr(errs, err, "Dolar Base")
+	wg := sync.WaitGroup{}
+	wg.Add(3)
 
-	values["compras_paraguai"], err = p.getValueComprasParaguai()
-	p.checkErr(errs, err, "Compras Paraguai")
+	go p.getValueDollarBase(&wg, values, errs)
+	go p.getValueComprasParaguai(&wg, values, errs)
+	go p.getValueSaltoDelGuaira(&wg, values, errs)
 
-	values["salto_del_guaira"], err = p.getValueSaltoDelGuaira()
-	p.checkErr(errs, err, "Salto Del Guaira")
+	wg.Wait()
 
 	return values, errs
 }
 
-func (p *PurchaseValues) getValueDollarBase() (value float32, err error) {
-	return NewBase().GetValue()
+func (p *PurchaseValues) getValueDollarBase(wg *sync.WaitGroup, values, errs map[string]any) {
+	prefix := "dollar_base"
+	values[prefix], errs[prefix] = NewBase().GetValue()
+	wg.Done()
 }
 
-func (p *PurchaseValues) getValueComprasParaguai() (value float64, err error) {
-	return NewComprasParaguai().GetValue()
+func (p *PurchaseValues) getValueComprasParaguai(wg *sync.WaitGroup, values, errs map[string]any) {
+	prefix := "compras_paraguai"
+	values[prefix], errs[prefix] = NewComprasParaguai().GetValue()
+	wg.Done()
 }
 
-func (p *PurchaseValues) getValueSaltoDelGuaira() (value float64, err error) {
-	return NewSaltoDelGuaira().GetValue()
+func (p *PurchaseValues) getValueSaltoDelGuaira(wg *sync.WaitGroup, values, errs map[string]any) {
+	prefix := "salto_del_guaira"
+	values[prefix], errs[prefix] = NewSaltoDelGuaira().GetValue()
+	wg.Done()
 }
 
 // Logs

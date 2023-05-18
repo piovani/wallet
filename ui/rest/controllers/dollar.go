@@ -15,11 +15,12 @@ func NewDollarController() *DollarController {
 
 func (d *DollarController) PurchaseValues(c *gin.Context) {
 	values, err := dollar.NewPurchaseValues().Execute()
-	if len(err) > 0 {
-		c.JSON(http.StatusInternalServerError, map[string]any{
-			"error": err,
-		})
+	for _, e := range err {
+		if e != nil {
+			c.JSON(http.StatusInternalServerError, map[string]any{
+				"error": err,
+			})
+		}
 	}
-
 	c.JSON(http.StatusOK, values)
 }
