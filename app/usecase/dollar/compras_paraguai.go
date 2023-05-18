@@ -15,7 +15,7 @@ func NewComprasParaguai() *ComprasParaguai {
 	return &ComprasParaguai{}
 }
 
-func (c *ComprasParaguai) GetValue() (value float64, err error) {
+func (c *ComprasParaguai) GetValue() (value any, err error) {
 	res, err := http.Get("https://www.comprasparaguai.com.br/imposto-dolar/")
 	if err != nil {
 		return value, err
@@ -32,10 +32,14 @@ func (c *ComprasParaguai) GetValue() (value float64, err error) {
 	}
 
 	content := doc.Text()
-	init := strings.Index(content, "R$")
-	position := strings.Index(content[init:len(content)-1], "\n")
+	init := strings.Index(content, "COTAÇÃO DO DÓLAR\n")
+	final := strings.Index(content, "COTAÇÃO\n ")
 
-	valueString := strings.Replace(content[init+3:init+position], ",", ".", 1)
+	sub := content[init:final]
+	init = strings.Index(sub, "R$ ")
+	final = strings.Index(sub[init:], "\n")
+
+	valueString := strings.Replace(sub[init+3:init+final], ",", ".", 1)
 
 	value, err = strconv.ParseFloat(valueString, 64)
 	if err == nil {
