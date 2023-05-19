@@ -16,11 +16,12 @@ func (p *PurchaseValues) Execute() (map[string]any, map[string]any) {
 	errs := make(map[string]any)
 
 	wg := sync.WaitGroup{}
-	wg.Add(3)
+	wg.Add(4)
 
 	go p.getValueDollarBase(&wg, values, errs)
 	go p.getValueComprasParaguai(&wg, values, errs)
 	go p.getValueSaltoDelGuaira(&wg, values, errs)
+	go p.getValueNomad(&wg, values, errs)
 
 	wg.Wait()
 
@@ -42,6 +43,12 @@ func (p *PurchaseValues) getValueComprasParaguai(wg *sync.WaitGroup, values, err
 func (p *PurchaseValues) getValueSaltoDelGuaira(wg *sync.WaitGroup, values, errs map[string]any) {
 	prefix := "salto_del_guaira"
 	values[prefix], errs[prefix] = NewSaltoDelGuaira().GetValue()
+	wg.Done()
+}
+
+func (p *PurchaseValues) getValueNomad(wg *sync.WaitGroup, values, errs map[string]any) {
+	prefix := "nomad"
+	values[prefix], errs[prefix] = NewNomad().GetValue()
 	wg.Done()
 }
 
