@@ -30,25 +30,41 @@ func (p *PurchaseValues) Execute() (map[string]any, map[string]any) {
 
 func (p *PurchaseValues) getValueDollarBase(wg *sync.WaitGroup, values, errs map[string]any) {
 	prefix := "dollar_base"
-	values[prefix], errs[prefix] = NewBase().GetValue()
+	if value, err := NewBase().GetValue(); err == nil {
+		values[prefix] = value
+	} else {
+		errs[prefix] = errs[prefix]
+	}
 	wg.Done()
 }
 
 func (p *PurchaseValues) getValueComprasParaguai(wg *sync.WaitGroup, values, errs map[string]any) {
 	prefix := "compras_paraguai"
-	values[prefix], errs[prefix] = NewComprasParaguai().GetValue()
+	if value, err := NewComprasParaguai().GetValue(); err == nil {
+		values[prefix] = value
+	} else {
+		errs[prefix] = errs[prefix]
+	}
 	wg.Done()
 }
 
 func (p *PurchaseValues) getValueSaltoDelGuaira(wg *sync.WaitGroup, values, errs map[string]any) {
 	prefix := "salto_del_guaira"
-	values[prefix], errs[prefix] = NewSaltoDelGuaira().GetValue()
+	if value, err := NewSaltoDelGuaira().GetValue(); err == nil {
+		values[prefix] = value
+	} else {
+		errs[prefix] = errs[prefix]
+	}
 	wg.Done()
 }
 
 func (p *PurchaseValues) getValueNomad(wg *sync.WaitGroup, values, errs map[string]any) {
 	prefix := "nomad"
-	values[prefix], errs[prefix] = NewNomad().GetValue()
+	if value, err := NewNomad().GetValue(); err == nil {
+		values[prefix] = value
+	} else {
+		errs[prefix] = errs[prefix]
+	}
 	wg.Done()
 }
 
