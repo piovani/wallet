@@ -5,6 +5,7 @@ type PurchaseValuesOut struct {
 	ComprasParaguai any `json:"compras_paraguai"`
 	SaltoDelGuaira  any `json:"salto_del_guaira"`
 	Nomad           any `json:"nomad"`
+	Caixa           any `json:"caixa"`
 }
 
 func NewPurchaseValuesOut(values map[string]any) *PurchaseValuesOut {
@@ -13,5 +14,6 @@ func NewPurchaseValuesOut(values map[string]any) *PurchaseValuesOut {
 		ComprasParaguai: values["compras_paraguai"],
 		SaltoDelGuaira:  values["salto_del_guaira"],
 		Nomad:           values["nomad"],
+		Caixa:           values["caixa"],
 	}
 }
