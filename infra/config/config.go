@@ -7,6 +7,11 @@ import (
 
 type Config struct {
 	ApiRestPort int32 `envconfig:"API_REST_PORT"`
+
+	EmailHost     string `envconfig:"EMAIL_HOST"`
+	EmailPort     int32  `envconfig:"EMAIL_PORT"`
+	EmailUser     string `envconfig:"EMAIL_USER"`
+	EmailPassword string `envconfig:"EMAIL_PASSWORD"`
 }
 
 var Env Config

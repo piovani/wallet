@@ -18,6 +18,8 @@ func Execute() {
 		Rest,
 		// CRON
 		CurrentDollar,
+		// TEST
+		Test,
 	)
 
 	CheckFatal(cmd.Execute())
