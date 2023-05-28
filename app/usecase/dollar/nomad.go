@@ -1,12 +1,10 @@
 package dollar
 
 import (
-	"fmt"
-	"net/http"
 	"strconv"
 	"strings"
 
-	"github.com/PuerkitoBio/goquery"
+	"github.com/piovani/wallet/infra/http"
 )
 
 type Nomad struct{}
@@ -16,22 +14,11 @@ func NewNomad() *Nomad {
 }
 
 func (n *Nomad) GetValue() (value any, err error) {
-	res, err := http.Get("https://www.nomadglobal.com/")
-	if err != nil {
-		return value, err
-	}
-	defer res.Body.Close()
-
-	if res.Status != "200 OK" {
-		return value, fmt.Errorf("DEU RUIM")
-	}
-
-	doc, err := goquery.NewDocumentFromReader(res.Body)
+	content, err := http.NewHttp().GetToCrawler("https://www.nomadglobal.com/")
 	if err != nil {
 		return value, err
 	}
 
-	content := doc.Text()
 	init := strings.Index(content, "Cotação agoraR$ ")
 	end := strings.Index(content[init:], "\n")
 

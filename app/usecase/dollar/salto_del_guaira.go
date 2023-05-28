@@ -1,12 +1,10 @@
 package dollar
 
 import (
-	"fmt"
-	"net/http"
 	"strconv"
 	"strings"
 
-	"github.com/PuerkitoBio/goquery"
+	"github.com/piovani/wallet/infra/http"
 )
 
 type SaltoDelGuaira struct{}
@@ -16,27 +14,16 @@ func NewSaltoDelGuaira() *SaltoDelGuaira {
 }
 
 func (a *SaltoDelGuaira) GetValue() (value float64, err error) {
-	res, err := http.Get("http://mundialcambios.com.py/?branch=5&lang=pt")
-	if err != nil {
-		return value, err
-	}
-	defer res.Body.Close()
-
-	if res.Status != "200 OK" {
-		return value, fmt.Errorf("DEU RUIM")
-	}
-
-	doc, err := goquery.NewDocumentFromReader(res.Body)
+	content, err := http.NewHttp().GetToCrawler("http://mundialcambios.com.py/?branch=5&lang=pt")
 	if err != nil {
 		return value, err
 	}
 
-	content := doc.Find("h3").Text()
 	init := strings.Index(content, "x BRL")
-	position := strings.Index(content[init:len(content)-1], "USD x")
+	init += 263
+	end := init + 4
 
-	valueString := strings.Replace(content[init+9:init+position], ",", ".", 1)
-
+	valueString := strings.Replace(content[init:end], ",", ".", 1)
 	value, err = strconv.ParseFloat(valueString, 64)
 	if err == nil {
 		return value, err

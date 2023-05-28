@@ -1,12 +1,10 @@
 package dollar
 
 import (
-	"fmt"
-	"net/http"
 	"strconv"
 	"strings"
 
-	"github.com/PuerkitoBio/goquery"
+	"github.com/piovani/wallet/infra/http"
 )
 
 type ComprasParaguai struct{}
@@ -16,22 +14,11 @@ func NewComprasParaguai() *ComprasParaguai {
 }
 
 func (c *ComprasParaguai) GetValue() (value any, err error) {
-	res, err := http.Get("https://www.comprasparaguai.com.br/imposto-dolar/")
-	if err != nil {
-		return value, err
-	}
-	defer res.Body.Close()
-
-	if res.Status != "200 OK" {
-		return value, fmt.Errorf("DEU RUIM")
-	}
-
-	doc, err := goquery.NewDocumentFromReader(res.Body)
+	content, err := http.NewHttp().GetToCrawler("https://www.comprasparaguai.com.br/imposto-dolar/")
 	if err != nil {
 		return value, err
 	}
 
-	content := doc.Text()
 	init := strings.Index(content, "COTAÇÃO DO DÓLAR\n")
 	final := strings.Index(content, "COTAÇÃO\n ")
 

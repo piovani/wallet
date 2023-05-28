@@ -2,10 +2,10 @@ package dollar
 
 import (
 	"encoding/json"
-	"io"
-	"net/http"
 	"strconv"
 	"strings"
+
+	"github.com/piovani/wallet/infra/http"
 )
 
 type ResponseCaixa []struct {
@@ -20,24 +20,7 @@ func NewCaixa() *Caixa {
 }
 
 func (c *Caixa) GetValue() (value any, err error) {
-	client := &http.Client{}
-	req, err := http.NewRequest("GET", "https://servicebus.caixa.gov.br/cotacoes/api/CotacaoDolar/BuscarCotacaoDolar", nil)
-	if err != nil {
-		return value, err
-	}
-	req.Header = http.Header{
-		"Content-Type": {"application/json"},
-		"Accept":       {"application/json"},
-	}
-
-	res, err := client.Do(req)
-	if err != nil {
-		return value, err
-	}
-	defer res.Body.Close()
-
-	content, err := io.ReadAll(res.Body)
-	res.Body.Close()
+	content, err := http.NewHttp().Get("https://servicebus.caixa.gov.br/cotacoes/api/CotacaoDolar/BuscarCotacaoDolar")
 	if err != nil {
 		return value, err
 	}

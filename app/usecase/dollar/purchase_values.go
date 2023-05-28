@@ -16,13 +16,13 @@ func (p *PurchaseValues) Execute() (map[string]any, map[string]any) {
 	errs := make(map[string]any)
 
 	wg := sync.WaitGroup{}
-	wg.Add(5)
+	wg.Add(4)
 
 	go p.getValueDollarBase(&wg, values, errs)
 	go p.getValueComprasParaguai(&wg, values, errs)
 	go p.getValueSaltoDelGuaira(&wg, values, errs)
 	go p.getValueNomad(&wg, values, errs)
-	go p.getValueCaixa(&wg, values, errs)
+	// go p.getValueCaixa(&wg, values, errs)
 
 	wg.Wait()
 

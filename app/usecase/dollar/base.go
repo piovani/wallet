@@ -3,9 +3,9 @@ package dollar
 import (
 	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 	"time"
+
+	"github.com/piovani/wallet/infra/http"
 )
 
 type Base struct{}
@@ -25,13 +25,7 @@ type Exchange struct {
 }
 
 func (b *Base) GetValue() (value float32, err error) {
-	res, err := http.Get("https://www.bcb.gov.br/api/servico/sitebcb/indicadorCambio")
-	if err != nil {
-		return value, err
-	}
-
-	content, err := io.ReadAll(res.Body)
-	res.Body.Close()
+	content, err := http.NewHttp().Get("https://www.bcb.gov.br/api/servico/sitebcb/indicadorCambio")
 	if err != nil {
 		return value, err
 	}
