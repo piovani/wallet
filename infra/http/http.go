@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 
 	"github.com/PuerkitoBio/goquery"
 )
@@ -14,7 +15,9 @@ type Http struct {
 
 func NewHttp() *Http {
 	return &Http{
-		client: &http.Client{},
+		client: &http.Client{
+			Timeout: time.Second,
+		},
 	}
 }
 
