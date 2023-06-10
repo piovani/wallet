@@ -16,7 +16,7 @@ type Http struct {
 func NewHttp() *Http {
 	return &Http{
 		client: &http.Client{
-			Timeout: time.Second,
+			Timeout: time.Second * 2,
 		},
 	}
 }
