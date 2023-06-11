@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/piovani/wallet/infra/config"
@@ -12,6 +13,8 @@ func Execute() {
 		Use:     "wallet",
 		Version: "1.0.0",
 	}
+
+	InitConfig()
 
 	cmd.AddCommand(
 		// HTTP
@@ -27,7 +30,7 @@ func Execute() {
 
 func CheckFatal(err error) {
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal(fmt.Printf("error during application startup: %v", err))
 	}
 }
 

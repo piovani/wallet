@@ -11,7 +11,6 @@ var (
 		Short:   "Start listen http type rest",
 		Version: "1.0.0",
 		Run: func(cmd *cobra.Command, args []string) {
-			InitConfig()
 			CheckFatal(rest.NewRest().Start())
 		},
 	}
