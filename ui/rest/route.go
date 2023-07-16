@@ -9,6 +9,7 @@ func GetRoute(r *gin.Engine) {
 	// Controllers
 	healthController := controllers.NewHealthController()
 	dollarController := controllers.NewDollarController()
+	testController := controllers.NewTestController()
 
 	// HEALTH
 	r.GET("/health", healthController.Health)
@@ -16,4 +17,7 @@ func GetRoute(r *gin.Engine) {
 	// DOLLAR
 	routeDollar := r.Group("/dollar")
 	routeDollar.GET("/purchase-values", dollarController.PurchaseValues)
+
+	// TESTS
+	r.GET("/test", testController.Test)
 }

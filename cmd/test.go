@@ -2,8 +2,9 @@ package cmd
 
 import (
 	"fmt"
+	"time"
 
-	"github.com/piovani/wallet/infra/notification"
+	"github.com/piovani/wallet/app/shared"
 	"github.com/spf13/cobra"
 )
 
@@ -15,12 +16,10 @@ var (
 		Run: func(cmd *cobra.Command, args []string) {
 			InitConfig()
 
-			not := notification.NewNotification()
-			msg := not.GetMsgEmail()
+			checkDayIsHoliday := shared.NewCheckDayIsHoliday()
+			res := checkDayIsHoliday.Execute(time.Now())
 
-			if err := not.SendEmail(msg); err != nil {
-				fmt.Println("DEU RUIM", err)
-			}
+			fmt.Println(res)
 		},
 	}
 )
